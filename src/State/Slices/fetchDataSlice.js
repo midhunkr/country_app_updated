@@ -20,7 +20,6 @@ export const fetchData = createSlice({
     reducers: {
         filterCountryList: (state, action) => {
             const filter = action.payload.filter;
-            console.log(filter);
             const filteredCountryData = state.countryData.filter((item) => item.continent == filter)
             state.filteredCountryList = filteredCountryData;
             state.activeContinent = filter;

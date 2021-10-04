@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux"
 import { useHistory } from "react-router"
 import CountryCard from "../../Components/CountryCard"
 import DataGrid from "../../Components/DataGrid"
+import PaginationFrame from "../../Components/Pagination"
 import { fetchDataAsync,filterCountryList } from '../../State/Slices/fetchDataSlice'
 function Home() {
     const state = useSelector((state) => state.fetchData)
@@ -13,7 +14,8 @@ function Home() {
     const filteredData=state.filteredCountryList;
     const activeContinent=state.activeContinent;
     let activeItem=state.continentData[0]
-    
+    const pageLength=Math.ceil(filteredData.length/5);
+   
     useEffect(() => {
         if(filteredData.length==0||activeContinent==''){
             dispatch(fetchDataAsync())
@@ -53,26 +55,16 @@ function Home() {
                 </Col>
                 <Col md={9}  >
                     <Container>
+                 
                         <DataGrid data={filteredData} firstButtonName="Favourite" ></DataGrid>
-                        {/* <Row>
-                            <Col md={4}>
-                            <CountryCard countryData={filteredData[0]} key={filteredData[0].name}></CountryCard>
-                            </Col>
-                            <Col  md={4}>
-                            <CountryCard countryData={filteredData[1]} key={filteredData[1].name}></CountryCard>
-                            </Col>
-                            <Col  md={4}>
-                            <CountryCard countryData={filteredData[1]} key={filteredData[1].name}></CountryCard>
-                            </Col>
-                           
-                        </Row> */}
-                       
+                        
                     </Container>
-                    {/* {filteredData.map((item) => <CountryCard countryData={item} key={item.name}></CountryCard>)} */}
-                   
-                   
 
-
+                </Col>
+            </Row>
+            <Row>
+                <Col className="d-flex justify-content-center">
+                <PaginationFrame length={pageLength}></PaginationFrame>
                 </Col>
             </Row>
         </Container>
