@@ -10,9 +10,9 @@ function PaginationFrame(props) {
 
         <Pagination>
            
-            <Pagination.Prev />
+            
             {pageNumbers}
-            <Pagination.Next />
+           
            
         </Pagination>
     )
