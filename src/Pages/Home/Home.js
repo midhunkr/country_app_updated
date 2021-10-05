@@ -1,68 +1,92 @@
 import { useEffect, useState } from "react"
-import { Alert, Col, Container, ListGroup, Row, Table } from "react-bootstrap"
+import { Alert, Col, Container, ListGroup, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap"
 import { useSelector } from "react-redux"
 import { useDispatch } from "react-redux"
 import { useHistory } from "react-router"
 import CountryCard from "../../Components/CountryCard"
 import DataGrid from "../../Components/DataGrid"
 import PaginationFrame from "../../Components/Pagination"
-import { fetchDataAsync, filterCountryList } from '../../State/Slices/fetchDataSlice'
+import { sendNewData,fetchDataAsync, filterCountryList } from '../../State/Slices/fetchDataSlice'
 var startingIndex = 0;
 function Home() {
     const state = useSelector((state) => state.fetchData)
     const dispatch = useDispatch()
     const history = useHistory()
+    useEffect(() => {
+        // console.log('useEffect');
+        // if (filteredData.length == 0 || activeContinent == '') {
+        //     dispatch(fetchDataAsync())
+        // }
+
+        filterCountries(activeItem)
+
+        changeItems(0)
+
+
+
+
+    }, []);
     const filteredData = state.filteredCountryList;
     const activeContinent = state.activeContinent;
     let activeItem = state.continentData[0]
     const pageLength = Math.ceil(filteredData.length / 5);
-    console.log(filteredData);
-    const [start,setStart]=useState(0)
-    
+    const [flength,setFlength]=useState(0)
+    const [isLoading, setIsLoading] = useState(true)
     const currentElements = [];
-    let [updatedList,setUpdatedList]=useState([])
+    let [updatedList, setUpdatedList] = useState([])
     useEffect(() => {
-        if (filteredData.length == 0 || activeContinent == '') {
-            dispatch(fetchDataAsync())
-        }
+        // console.log('useEffect');
+        // if (filteredData.length == 0 || activeContinent == '') {
+        //     dispatch(fetchDataAsync())
+        // }
+
         filterCountries(activeItem)
-        changeItems(1)
+
+
+
+
+
+
     }, []);
+
     const filterCountries = (item) => {
         dispatch(filterCountryList({ filter: item }))
+
         changeItems(0);
+
+
     }
 
     const changeItems = (index) => {
-        console.log(`the idex is ${index}`);
-        let count = 0;
-        console.log('before loop');
-        while (currentElements.length > 0) {
-            console.log('first  loop begins');
-            currentElements.pop()
+        dispatch(sendNewData({newIndex:index}))
 
-        }
-        if(index===0){
-            startingIndex=0;
-        }
-        else{
-            startingIndex=(index+1)*5-5;
-        }
-        console.log(`starting index ${startingIndex}`);
-        console.log('first  loop ends');
-        console.log(`index is ${index}`);
-        console.log(`index is ${index}`);
-        while (startingIndex <= filteredData.length - 1 && count != 5) {
+        // let count = 0;
 
-            console.log('entered in loop');
-            currentElements.push(filteredData[startingIndex]);
-            startingIndex+=1
-            count += 1;
-        }
-        console.log(currentElements);
-        setUpdatedList(currentElements);
-        updatedList.map((item)=>console.log(item))
-        // console.log(`the updated list ${JSON.stringify(updatedList[0])}`);
+        // while (currentElements.length > 0) {
+
+        //     currentElements.pop()
+
+        // }
+        // if (index === 0) {
+        //     startingIndex = 0;
+        // }
+        // else {
+        //     startingIndex = (index + 1) * 5 - 5;
+        // }
+        // console.log(`filtered data length ${filteredData.length}`);
+        // while (startingIndex <= filteredData.length - 1 && count != 5) {
+
+        //     console.log('entered in loop');
+        //     currentElements.push(filteredData[startingIndex]);
+        //     startingIndex += 1
+        //     count += 1;
+        // }
+        // console.log('the updated list is');
+        // console.log(currentElements);
+        // setUpdatedList(currentElements);
+
+
+
     }
     if (!state.isLoggedIn) {
         const reRoute = () => {
@@ -77,26 +101,30 @@ function Home() {
             </Container>
         )
     }
-    if (filteredData.length == 0 || activeContinent == '') {
-        dispatch(fetchDataAsync())
-    }
+    // if (filteredData.length == 0 || activeContinent == '') {
+    //     dispatch(fetchDataAsync())
+    // }
     return (
         <Container fluid>
             <Row>
                 <Col md={3}>
-                    <ListGroup as="ul" className="w-75 m-3">
-                        {state.continentData.map((item) => <ListGroup.Item as="li" key={item} active={activeContinent == item ? true : false}
-                            onClick={() => {
-                                // activeItem=item;
-                                filterCountries(item);
-                            }}
-                        >{item}</ListGroup.Item>)}
-                    </ListGroup>
+                    <OverlayTrigger placement="right" overlay={<Tooltip>Double Click To Select</Tooltip>}>
+                        <ListGroup as="ul" className="w-75 m-3">
+
+                            {state.continentData.map((item) => <ListGroup.Item as="li" key={item} active={activeContinent == item ? true : false}
+                                onClick={() => {
+                                    // activeItem=item;
+                                    filterCountries(item);
+                                }}
+                            >{item}</ListGroup.Item>)}
+
+
+                        </ListGroup>
+                    </OverlayTrigger>
                 </Col>
                 <Col md={9}  >
                     <Container>
-
-                        <DataGrid data={updatedList} firstButtonName="Favourite" ></DataGrid>
+                        <DataGrid data={state.updatedData} firstButtonName="Favourite" ></DataGrid>
 
                     </Container>
 

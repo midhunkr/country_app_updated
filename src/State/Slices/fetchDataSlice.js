@@ -15,7 +15,9 @@ export const fetchData = createSlice({
         continentData: [],
         filteredCountryList: [],
         isLoggedIn: false,
-        userDetails: []
+        userDetails: [],
+        updatedData: [],
+        startingIndex:0
     },
     reducers: {
         filterCountryList: (state, action) => {
@@ -41,6 +43,28 @@ export const fetchData = createSlice({
         updateUserCredentials: (state, action) => {
             state.userDetails = [];
             state.userDetails.push(action.payload.userData)
+        },
+        sendNewData: (state, action) => {
+            const index=action.payload.newIndex;
+            let count = 0;
+
+            while (state.updatedData.length > 0) {
+
+                state.updatedData.pop()
+
+            }
+            if (index === 0) {
+                state.startingIndex = 0;
+            }
+            else {
+                state.startingIndex = (index + 1) * 5 - 5;
+            }
+            while (state.startingIndex <= state.filteredCountryList.length - 1 && count != 5) {
+                state.updatedData.push(state.filteredCountryList[state.startingIndex]);
+                state.startingIndex += 1
+                count += 1;
+            }
+            
         }
     },
     extraReducers: {
@@ -59,6 +83,6 @@ export const fetchData = createSlice({
     }
 })
 
-export const { filterCountryList, notifyLogin,updateUserCredentials } = fetchData.actions;
+export const { sendNewData,filterCountryList, notifyLogin, updateUserCredentials } = fetchData.actions;
 
 export default fetchData.reducer;
